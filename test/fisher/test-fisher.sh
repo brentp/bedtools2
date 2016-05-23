@@ -3,10 +3,11 @@ BT=${BT-../../bin/bedtools}
 check()
 {
 	if diff $1 $2; then
-    	echo ok
+		echo ok
 		return 1
 	else
     	echo fail
+		exit 1;
 		return 0
 	fi
 }
@@ -93,3 +94,28 @@ left	right	two-tail	ratio
 $BT fisher -a a_merge.bed -b b.bed -g t.60.genome -m > obs
 check obs exp
 rm obs exp
+
+
+
+echo "    fisher.t5...\c"
+
+$BT fisher -g g1k.txt -a A.bed -b B.bed > obs
+
+echo \
+"# Number of query intervals: 23952
+# Number of db intervals: 5685
+# Number of overlaps: 781
+# Number of possible intervals (estimated): 2488643
+# phyper(781 - 1, 23952, 2488643 - 23952, 5685, lower.tail=F)
+# Contingency Table Of Counts
+#_________________________________________
+#           |  in -b       | not in -b    |
+#     in -a | 781          | 23171        |
+# not in -a | 4904         | 2459787      |
+#_________________________________________
+# p-values for fisher's exact test
+left	right	two-tail	ratio
+1	0	0	16.906" > exp
+check obs exp
+rm obs exp
+exit 0
